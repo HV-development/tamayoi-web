@@ -97,7 +97,7 @@ export default function HomePage() {
   }
 
   const handleSignup = () => {
-    setCurrentView("email-registration")
+    window.location.href = '/email-registration'
   }
 
   const handleForgotPassword = () => {

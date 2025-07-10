@@ -263,28 +263,6 @@ export function MapLayout({
     return <SubscriptionLayout onSubscribe={onSubscribe} onLogoClick={onLogoClick} isLoading={isLoading} />
   }
 
-  if (currentView === "email-registration") {
-    return (
-      <EmailRegistrationLayout
-        onSubmit={onEmailSubmit}
-        onBack={onBackToMap}
-        onLogoClick={onLogoClick}
-        isLoading={isLoading}
-      />
-    )
-  }
-
-  if (currentView === "signup") {
-    return (
-      <SignupLayout
-        initialData={signupData}
-        onSubmit={onSignupSubmit}
-        onCancel={onSignupCancel}
-        onLogoClick={onLogoClick}
-        isLoading={isLoading}
-      />
-    )
-  }
 
   if (currentView === "confirmation") {
     return (
