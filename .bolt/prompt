@@ -1,0 +1,83 @@
+このドキュメントは、TAMAYOIアプリプロジェクトのフロントエンドアプリケーション開発における基本方針と運用ルールを記載した Devin Knowledge です。
+
+## 技術スタックと基本方針
+
+| 項目 | 内容 |
+|------|------|
+| 言語 | TypeScript |
+| フレームワーク | Next.js 15 (App Router 使用) |
+| 型定義 | tamayoi-schema（GitHub Packages にて公開） |
+| スタイリング | UnoCSS |
+| バリデーション | Zod（tamayoi-schemaに統一） |
+| コンポーネント設計 | Atomic Design |
+| データ通信 | fetch または axios（統一） |
+| 状態管理 | useState / useEffect（v0では簡素に） |
+| 画面描画 | SSR（CSR/ISRは特別な指示がある場合のみ） |
+| Lint / Formatter | ESLint / Prettier 導入済み |
+| Node.js バージョン | 18.x (LTS) |
+| パスエイリアス | `@/` (`tsconfig.json`で定義) |
+
+## 型定義の利用（tamayoi-schema）
+
+- GitHub Packages にて `@your-org/tamayoi-schema` をプライベート公開
+- インストールには `.npmrc` にてトークン認証が必要
+
+```bash
+pnpm add @your-org/tamayoi-schema
+```
+
+```text
+// .npmrc
+// 注意: トークンのスコープにリポジトリアクセス権限が必要
+@your-org:registry=https://npm.pkg.github.com/
+//npm.pkg.github.com/:_authToken=ghp_XXXXXXXXXXXXXXXXXXXXXXX
+```
+
+- スキーマは zod により定義され、REST API とのリクエスト/レスポンスバリデーションやフォームバリデーションに再利用可能
+
+## Atomic Design に基づくディレクトリ構成
+
+```
+/src
+├── components
+│   ├── atoms       // ボタン、入力フィールドなどの最小単位
+│   ├── molecules   // FormGroup、検索フォームなど
+│   ├── organisms   // モーダル、リスト、ヘッダーなど領域単位
+│   ├── templates   // ヘッダー・フッター込みのページレイアウト
+│   └── pages       // Next.js ルーティングと紐づくページ
+├── app             // app router 構成のルーティング
+├── schemas         // tamayoi-schema からインポートした型のラップ層
+├── hooks           // カスタムフック
+├── utils           // 汎用関数
+├── lib             // axios などのラッパーライブラリ
+├── styles          // UnoCSS 設定ファイル等
+└── types           // 補助的な型定義（Zod 以外）
+```
+
+## コンポーネント設計ルール
+
+- `pages`, `templates` に直接 HTML を書くことは禁止
+- 必ず下位層（organisms以下）で構成された UI を利用して構築
+- CSSユーティリティクラスの使用も `atoms` 内にラップされたコンポーネントを介して行う
+- UIを新規作成する際は以下の順序で再利用・分離を検討
+  1. atoms から既存利用
+  2. molecules に抽出
+  3. organisms に昇格
+
+## REST API 通信設計
+
+- REST API 仕様は別途定義された devin knowledge に準拠
+- 通信層は `lib/api.ts` 等に axios wrapper を作成し集中管理
+- スキーマバリデーションは `tamayoi-schema` を使用
+- 各エンドポイントに対応するZodスキーマでレスポンス/リクエストを検証
+
+## テスト・品質管理
+
+- ユニットテストは `vitest` を推奨
+- `eslint`, `prettier`, `typescript` の型チェックは CI で自動実行
+
+## 注意事項（v0限定）
+
+- 外部通信/APIは基本的にMock（Express）に接続
+- 状態管理は最小限（React Queryなどはv1以降）
+- 本構成はUIプロトタイピングに特化しており、パフォーマンスチューニング等は未考慮
