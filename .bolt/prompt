@@ -17,6 +17,46 @@
 | Node.js バージョン | 18.x (LTS) |
 | パスエイリアス | `@/` (`tsconfig.json`で定義) |
 
+## ディレクトリ構成とファイル操作ルール
+
+### プロジェクト構造
+```
+tamayoi-web/
+├── frontend/              # Next.jsアプリケーション（メイン作業ディレクトリ）
+│   ├── src/              # ソースコード
+│   │   ├── app/          # Next.js App Router
+│   │   ├── components/   # Reactコンポーネント
+│   │   ├── hooks/        # カスタムフック
+│   │   ├── lib/          # ユーティリティライブラリ
+│   │   ├── types/        # TypeScript型定義
+│   │   ├── utils/        # ユーティリティ関数
+│   │   ├── data/         # モックデータ
+│   │   └── styles/       # スタイルファイル
+│   ├── public/           # 静的ファイル
+│   ├── package.json      # 依存関係
+│   └── ...               # 設定ファイル
+├── infrastructure/       # インフラストラクチャ
+└── README.md
+```
+
+### ファイル操作ルール
+1. **基本パス**: すべてのファイル操作は `~/project/frontend/` から開始する
+2. **起動コマンド**: `pnpm dev` を使用する
+3. **パッケージ管理**: `pnpm` を使用する（npm, yarnは使用しない）
+4. **作業ディレクトリ**: frontendディレクトリ内で作業を行う
+
+### コマンド実行例
+```bash
+# 開発サーバー起動
+cd ~/project/frontend && pnpm dev
+
+# パッケージインストール
+cd ~/project/frontend && pnpm add [package-name]
+
+# ビルド
+cd ~/project/frontend && pnpm build
+```
+
 ## 型定義の利用（tamayoi-schema）
 
 - GitHub Packages にて `@your-org/tamayoi-schema` をプライベート公開
@@ -70,6 +110,36 @@ pnpm add @your-org/tamayoi-schema
 - 通信層は `lib/api.ts` 等に axios wrapper を作成し集中管理
 - スキーマバリデーションは `tamayoi-schema` を使用
 - 各エンドポイントに対応するZodスキーマでレスポンス/リクエストを検証
+
+## Next.js 15 対応
+
+### useSearchParams バグ回避
+Next.js 15では`useSearchParams`にバグがあるため、以下の方法で回避する：
+
+```typescript
+// ❌ 直接useSearchParamsを使用しない
+const searchParams = useSearchParams()
+
+// ✅ useEffectとwindow.locationを使用
+const [searchParams, setSearchParams] = useState<{[key: string]: string}>({})
+const [isClient, setIsClient] = useState(false)
+
+useEffect(() => {
+  setIsClient(true)
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search)
+    setSearchParams({
+      param1: urlParams.get('param1') || '',
+      param2: urlParams.get('param2') || '',
+    })
+  }
+}, [])
+
+// クライアント初期化完了まで待機
+if (!isClient) {
+  return <LoadingComponent />
+}
+```
 
 ## テスト・品質管理
 
