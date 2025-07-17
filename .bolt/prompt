@@ -81,3 +81,6 @@ pnpm add @your-org/tamayoi-schema
 - 外部通信/APIは基本的にMock（Express）に接続
 - 状態管理は最小限（React Queryなどはv1以降）
 - 本構成はUIプロトタイピングに特化しており、パフォーマンスチューニング等は未考慮
+
+## プロンプトの表示
+日本語で全て表示
