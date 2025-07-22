@@ -53,12 +53,18 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
     }
   ]
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    // オーバーレイをクリックした時のみ閉じる
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
   return (
     <>
       {/* オーバーレイ */}
       <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in-0 duration-300" 
-        onClick={onClose}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in-0 duration-300"
+        onClick={handleOverlayClick}
       ></div>
 
       {/* モーダル */}
@@ -78,7 +84,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
               </div>
               <button 
                 onClick={onClose} 
-                className="p-2 hover:bg-white/20 rounded-full transition-colors hover:scale-110 duration-200"
+                className="p-2 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110 hover:rotate-90"
                 aria-label="閉じる"
               >
                 <X className="w-6 h-6" />
@@ -103,7 +109,11 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
               {guideSteps.map((step, index) => {
                 const Icon = step.icon
                 return (
-                  <div key={index} className="bg-white rounded-2xl border border-gray-200 p-5">
+                  <div 
+                    key={index} 
+                    className="bg-white rounded-2xl border border-gray-200 p-5 animate-in slide-in-from-left-4 duration-300"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">
                         <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -171,7 +181,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
           <div className="p-6 bg-white border-t border-gray-200 flex-shrink-0">
             <button
               onClick={onClose}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-[1.02] shadow-md hover:shadow-lg"
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-4 rounded-xl font-bold text-lg transition-all duration-200 hover:scale-[1.02] shadow-md hover:shadow-lg"
             >
               閉じる
             </button>

@@ -41,6 +41,13 @@ const GENRES = [
 export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps) {
   const [isUsageGuideOpen, setIsUsageGuideOpen] = useState(false)
 
+  const handleUsageGuideOpen = () => {
+    setIsUsageGuideOpen(true)
+  }
+
+  const handleUsageGuideClose = () => {
+    setIsUsageGuideOpen(false)
+  }
   return (
     <>
       <div className="flex-1 relative bg-gray-100">
@@ -62,7 +69,7 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
           {/* 右下のヘルプボタン */}
           <div className="absolute bottom-4 right-4">
             <button
-              onClick={() => setIsUsageGuideOpen(true)}
+              onClick={handleUsageGuideOpen}
               className="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full flex flex-col items-center justify-center shadow-lg cursor-pointer transition-all duration-200 hover:scale-105"
             >
               <HelpCircle className="w-5 h-5 text-white mb-1" />
@@ -75,7 +82,7 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
       {/* 使い方ガイドモーダル */}
       <UsageGuideModal
         isOpen={isUsageGuideOpen}
-        onClose={() => setIsUsageGuideOpen(false)}
+        onClose={handleUsageGuideClose}
       />
     </>
   )
