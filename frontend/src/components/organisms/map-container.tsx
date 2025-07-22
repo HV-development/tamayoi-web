@@ -47,7 +47,7 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
       {/* 地図のプレースホルダー */}
       <div
         className="w-full h-full bg-cover bg-center relative"
-        style={{
+           style={{
           backgroundImage: `url('/placeholder.svg?height=600&width=400')`,
         }}
       >
