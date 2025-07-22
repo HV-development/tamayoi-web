@@ -44,13 +44,13 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
   return (
     <>
       <div className="flex-1 relative bg-gray-100">
-      {/* 地図のプレースホルダー */}
-      <div
-        className="w-full h-full bg-cover bg-center relative"
+        {/* 地図のプレースホルダー */}
+        <div
+          className="w-full h-full bg-cover bg-center relative"
            style={{
-          backgroundImage: `url('/placeholder.svg?height=600&width=400')`,
-        }}
-      >
+            backgroundImage: `url('/placeholder.svg?height=600&width=400')`,
+          }}
+        >
         {/* 地図上のピン */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <div className="w-6 h-6 bg-blue-500 rounded-full border-4 border-white shadow-lg animate-pulse"></div>
