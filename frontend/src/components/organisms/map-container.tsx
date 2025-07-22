@@ -1,6 +1,8 @@
 "use client"
 
 import { HelpCircle } from "lucide-react"
+import { UsageGuideModal } from "../molecules/usage-guide-modal"
+import { useState } from "react"
 
 interface MapContainerProps {
   selectedArea: string
@@ -37,8 +39,11 @@ const GENRES = [
 ]
 
 export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps) {
+  const [isUsageGuideOpen, setIsUsageGuideOpen] = useState(false)
+
   return (
-    <div className="flex-1 relative bg-gray-100">
+    <>
+      <div className="flex-1 relative bg-gray-100">
       {/* 地図のプレースホルダー */}
       <div
         className="w-full h-full bg-cover bg-center relative"
@@ -56,12 +61,21 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
 
         {/* 右下のヘルプボタン */}
         <div className="absolute bottom-4 right-4">
-          <div className="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full flex flex-col items-center justify-center shadow-lg cursor-pointer transition-colors">
+          <button 
+            onClick={() => setIsUsageGuideOpen(true)}
+            className="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full flex flex-col items-center justify-center shadow-lg cursor-pointer transition-colors"
+          >
             <HelpCircle className="w-5 h-5 text-white mb-1" />
             <span className="text-white text-xs font-medium">使い方</span>
-          </div>
+          </button>
         </div>
       </div>
-    </div>
+      
+      {/* 使い方ガイドモーダル */}
+      <UsageGuideModal 
+        isOpen={isUsageGuideOpen} 
+        onClose={() => setIsUsageGuideOpen(false)} 
+      />
+    </>
   )
 }

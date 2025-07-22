@@ -77,6 +77,10 @@ export function FilterControls({
     onGenresChange([])
   }
 
+  const handleGenrePopupOpen = () => {
+    setIsGenrePopupOpen(true)
+  }
+
   const handleNotificationIconClick = () => {
     setIsNotificationPanelOpen(true)
     onNotificationClick()
@@ -111,7 +115,11 @@ export function FilterControls({
           selectedCount={selectedArea ? 1 : 0}
           onClick={() => setIsAreaPopupOpen(true)}
         />
-        <PopupButton label="ジャンル" selectedCount={selectedGenres.length} onClick={() => setIsGenrePopupOpen(true)} />
+        <PopupButton 
+          label="ジャンル" 
+          selectedCount={selectedGenres.length} 
+          onClick={handleGenrePopupOpen} 
+        />
       </div>
 
       {/* エリア選択ポップアップ */}
