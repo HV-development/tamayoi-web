@@ -63,7 +63,7 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
           <div className="absolute bottom-4 right-4">
             <button
               onClick={() => setIsUsageGuideOpen(true)}
-              className="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full flex flex-col items-center justify-center shadow-lg cursor-pointer transition-colors"
+              className="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full flex flex-col items-center justify-center shadow-lg cursor-pointer transition-all duration-200 hover:scale-105"
             >
               <HelpCircle className="w-5 h-5 text-white mb-1" />
               <span className="text-white text-xs font-medium">使い方</span>

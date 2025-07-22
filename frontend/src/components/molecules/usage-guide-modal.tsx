@@ -56,10 +56,13 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
   return (
     <>
       {/* オーバーレイ */}
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" onClick={onClose}></div>
+      <div 
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in-0 duration-300" 
+        onClick={onClose}
+      ></div>
 
       {/* モーダル */}
-      <div className="fixed inset-x-4 top-4 bottom-4 bg-white rounded-3xl shadow-2xl z-50 max-w-lg mx-auto overflow-hidden border-2 border-green-200">
+      <div className="fixed inset-x-4 top-4 bottom-4 bg-white rounded-3xl shadow-2xl z-50 max-w-lg mx-auto overflow-hidden border-2 border-green-200 animate-in slide-in-from-bottom-4 duration-300">
         <div className="flex flex-col h-full">
           {/* ヘッダー */}
           <div className="bg-gradient-to-r from-green-500 to-green-600 p-6 text-white flex-shrink-0">
@@ -75,7 +78,8 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
               </div>
               <button 
                 onClick={onClose} 
-                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                className="p-2 hover:bg-white/20 rounded-full transition-colors hover:scale-110 duration-200"
+                aria-label="閉じる"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -167,7 +171,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
           <div className="p-6 bg-white border-t border-gray-200 flex-shrink-0">
             <button
               onClick={onClose}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-xl font-medium transition-colors"
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-[1.02] shadow-md hover:shadow-lg"
             >
               閉じる
             </button>
