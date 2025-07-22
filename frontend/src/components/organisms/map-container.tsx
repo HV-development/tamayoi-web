@@ -79,3 +79,6 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
     </>
   )
 }
+
+  )
+}
