@@ -99,7 +99,7 @@ export default function HomePage() {
   }
 
   const handleSignup = () => {
-    setCurrentView("email-registration")
+    setCurrentView("signup")
   }
 
   const handleForgotPassword = () => {

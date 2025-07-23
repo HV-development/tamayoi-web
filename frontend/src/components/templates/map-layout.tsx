@@ -289,6 +289,17 @@ export function MapLayout({
     )
   }
 
+  if (currentView === "signup") {
+    return (
+      <SignupLayout
+        onSubmit={onSignupSubmit}
+        onCancel={onSignupCancel}
+        onLogoClick={onLogoClick}
+        isLoading={isLoading}
+      />
+    )
+  }
+
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       <FilterControls
