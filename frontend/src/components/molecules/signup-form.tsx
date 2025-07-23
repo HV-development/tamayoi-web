@@ -146,23 +146,66 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       return
     }
     
-    if (!/^\d{7}$/.test(formData.postalCode.replace(/-/g, ""))) {
+    const cleanedPostalCode = formData.postalCode.replace(/-/g, "")
+    if (!/^\d{7}$/.test(cleanedPostalCode)) {
       setErrors({ ...errors, postalCode: "郵便番号は7桁の数字で入力してください" })
       return
     }
 
+    // 郵便番号エラーをクリア
+    if (errors.postalCode) {
+      setErrors({ ...errors, postalCode: undefined })
+    }
+
     setIsSearchingAddress(true)
-    // 住所検索のシミュレーション
-    setTimeout(() => {
-      const mockAddress = "埼玉県さいたま市大宮区桜木町1-7-5"
-      setFormData(prev => ({ ...prev, address: mockAddress }))
-      setHasSearchedAddress(true)
-      // 住所が取得できたらエラーをクリア
-      if (errors.address) {
-        setErrors({ ...errors, address: undefined })
+    
+    try {
+      // 実際の住所検索API呼び出し（現在はモック）
+      const mockAddresses: Record<string, string> = {
+        "3300854": "埼玉県さいたま市大宮区桜木町",
+        "3300063": "埼玉県さいたま市浦和区高砂",
+        "3300846": "埼玉県さいたま市大宮区大門町",
+        "3380001": "埼玉県さいたま市中央区上落合",
+        "3360021": "埼玉県さいたま市南区別所",
+        "3370051": "埼玉県さいたま市見沼区東大宮",
+        "3310823": "埼玉県さいたま市北区日進町",
+        "3380832": "埼玉県さいたま市桜区西堀",
+        "3310052": "埼玉県さいたま市西区三橋",
+        "3370032": "埼玉県さいたま市見沼区東新井",
       }
+      
+      // 1秒後に結果を返すシミュレーション
+      setTimeout(() => {
+        const foundAddress = mockAddresses[cleanedPostalCode]
+        
+        if (foundAddress) {
+          // 住所を更新
+          setFormData(prev => ({ ...prev, address: foundAddress }))
+          setHasSearchedAddress(true)
+          
+          // 住所エラーをクリア
+          if (errors.address) {
+            setErrors(prev => ({ ...prev, address: undefined }))
+          }
+        } else {
+          // 住所が見つからない場合
+          setErrors(prev => ({ 
+            ...prev, 
+            postalCode: "該当する住所が見つかりませんでした。手入力で住所を入力してください。" 
+          }))
+        }
+        
+        setIsSearchingAddress(false)
+      }, 1000)
+      
+    } catch (error) {
+      console.error("住所検索エラー:", error)
+      setErrors(prev => ({ 
+        ...prev, 
+        postalCode: "住所検索に失敗しました。手入力で住所を入力してください。" 
+      }))
       setIsSearchingAddress(false)
-    }, 1000)
+    }
   }
 
   const updateFormData = (field: keyof SignupFormData, value: string) => {
@@ -178,7 +221,8 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         }
         break
       case 'postalCode':
-        if (value && /^\d{7}$/.test(value.replace(/-/g, ""))) {
+        const cleanedValue = value.replace(/-/g, "")
+        if (value && /^\d{7}$/.test(cleanedValue)) {
           delete newErrors.postalCode
         }
         break
