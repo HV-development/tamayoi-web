@@ -16,6 +16,7 @@ interface ProfileEditFormData {
   birthDate: string
   gender: string
   saitamaAppId: string
+  registeredStore: string
 }
 
 interface ProfileEditFormProps {
@@ -33,6 +34,7 @@ export function ProfileEditForm({ user, onSubmit, onCancel, isLoading = false }:
     birthDate: "",
     gender: "",
     saitamaAppId: "",
+    registeredStore: "",
   })
 
   const [originalData, setOriginalData] = useState<ProfileEditFormData>({
@@ -42,6 +44,7 @@ export function ProfileEditForm({ user, onSubmit, onCancel, isLoading = false }:
     birthDate: "",
     gender: "",
     saitamaAppId: "",
+    registeredStore: "",
   })
 
   const [errors, setErrors] = useState<Partial<ProfileEditFormData>>({})
@@ -56,6 +59,7 @@ export function ProfileEditForm({ user, onSubmit, onCancel, isLoading = false }:
       birthDate: user.birthDate || "",
       gender: user.gender || "",
       saitamaAppId: user.saitamaAppId || "",
+      registeredStore: user.registeredStore || "",
     }
     setFormData(initialData)
     setOriginalData(initialData)
@@ -64,7 +68,7 @@ export function ProfileEditForm({ user, onSubmit, onCancel, isLoading = false }:
   const genderOptions = [
     { value: "male", label: "男性" },
     { value: "female", label: "女性" },
-    { value: "other", label: "その他" },
+    { value: "other", label: "未回答" },
   ]
 
   const fieldLabels = {
@@ -74,6 +78,7 @@ export function ProfileEditForm({ user, onSubmit, onCancel, isLoading = false }:
     birthDate: "生年月日",
     gender: "性別",
     saitamaAppId: "さいたま市みんなのアプリID",
+    registeredStore: "登録店舗",
   }
 
   const getUpdatedFields = () => {
@@ -139,10 +144,31 @@ export function ProfileEditForm({ user, onSubmit, onCancel, isLoading = false }:
     setIsSearchingAddress(true)
     // 住所検索のシミュレーション
     setTimeout(() => {
-      const mockAddress = "埼玉県さいたま市大宮区桜木町1-7-5"
-      setFormData({ ...formData, address: mockAddress })
+        // 実際の住所検索APIを使用
+        fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${cleanedPostalCode}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 200 && data.results && data.results.length > 0) {
+              const result = data.results[0]
+              const fullAddress = `${result.address1}${result.address2}${result.address3}`
+              setFormData(prev => ({ ...prev, address: fullAddress }))
+              setErrors(prev => ({ ...prev, address: undefined }))
+            } else {
+              setErrors(prev => ({
+                ...prev,
+                address: "該当する住所が見つかりませんでした。手入力で住所を入力してください。"
+              }))
+            }
+          })
+          .catch(error => {
+            console.error("住所検索エラー:", error)
+            setErrors(prev => ({
+              ...prev,
+              address: "住所検索サービスに接続できませんでした。手入力で住所を入力してください。"
+            }))
+          })
       setIsSearchingAddress(false)
-    }, 1000)
+      }, 100)
   }
 
   const updateFormData = (field: keyof ProfileEditFormData, value: string) => {
@@ -224,6 +250,17 @@ export function ProfileEditForm({ user, onSubmit, onCancel, isLoading = false }:
         required
       />
 
+      {/* 登録店舗（表示のみ） */}
+      {formData.registeredStore && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">登録店舗</label>
+          <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700">
+            {formData.registeredStore}
+          </div>
+          <p className="mt-1 text-xs text-gray-500">※店舗QRコードから登録された店舗です</p>
+        </div>
+      )}
+
       {/* さいたま市みんなのアプリID */}
       <Input
         type="text"
@@ -240,7 +277,7 @@ export function ProfileEditForm({ user, onSubmit, onCancel, isLoading = false }:
           disabled={isLoading}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-base font-medium"
         >
-          {isLoading ? "更新中..." : "プロフィールを更新"}
+          {isLoading ? "確認中..." : "登録内容を確認する"}
         </Button>
 
         <Button type="button" onClick={onCancel} variant="secondary" className="w-full py-3 text-base font-medium">
