@@ -21,20 +21,61 @@ export function LoginForm({ onLogin, onSignup, onForgotPassword, isLoading = fal
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {}
 
+    // メールアドレス - 必須チェック
     if (!email) {
       newErrors.email = "メールアドレスを入力してください"
+    // メールアドレス - メールフォーマットチェック
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "正しいメールアドレスを入力してください"
     }
 
+    // パスワード - 必須チェック
     if (!password) {
       newErrors.password = "パスワードを入力してください"
-    } else if (password.length < 6) {
-      newErrors.password = "パスワードは6文字以上で入力してください"
+    // パスワード - 最小桁チェック
+    } else if (password.length < 8) {
+      newErrors.password = "パスワードは8文字以上で入力してください"
+    // パスワード - 最大桁チェック
+    } else if (password.length > 50) {
+      newErrors.password = "パスワードは50文字以内で入力してください"
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
+  }
+
+  // リアルタイムバリデーション（input時）
+  const validateField = (field: 'email' | 'password', value: string) => {
+    const newErrors = { ...errors }
+    
+    if (field === 'email') {
+      // メールアドレス - 必須チェック
+      if (!value) {
+        newErrors.email = "メールアドレスを入力してください"
+      // メールアドレス - メールフォーマットチェック
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        newErrors.email = "正しいメールアドレスを入力してください"
+      } else {
+        delete newErrors.email
+      }
+    }
+    
+    if (field === 'password') {
+      // パスワード - 必須チェック
+      if (!value) {
+        newErrors.password = "パスワードを入力してください"
+      // パスワード - 最小桁チェック
+      } else if (value.length < 8) {
+        newErrors.password = "パスワードは8文字以上で入力してください"
+      // パスワード - 最大桁チェック
+      } else if (value.length > 50) {
+        newErrors.password = "パスワードは50文字以内で入力してください"
+      } else {
+        delete newErrors.password
+      }
+    }
+    
+    setErrors(newErrors)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,7 +97,10 @@ export function LoginForm({ onLogin, onSignup, onForgotPassword, isLoading = fal
         label="メールアドレス"
         placeholder="example@email.com"
         value={email}
-        onChange={setEmail}
+        onChange={(value) => {
+          setEmail(value)
+          validateField('email', value)
+        }}
         error={errors.email}
         required
       />
@@ -66,7 +110,10 @@ export function LoginForm({ onLogin, onSignup, onForgotPassword, isLoading = fal
         label="パスワード"
         placeholder="パスワードを入力"
         value={password}
-        onChange={setPassword}
+        onChange={(value) => {
+          setPassword(value)
+          validateField('password', value)
+        }}
         error={errors.password}
         required
       />

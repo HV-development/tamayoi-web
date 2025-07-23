@@ -17,13 +17,24 @@ export function EmailRegistrationForm({ onSubmit, onBack, isLoading = false }: E
   const [error, setError] = useState("")
 
   const validateEmail = (email: string) => {
+    // メールアドレス - 必須チェック
     if (!email) {
       return "メールアドレスを入力してください"
     }
+    // メールアドレス - メールフォーマットチェック
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return "正しいメールアドレスを入力してください"
     }
     return ""
+  }
+
+  // リアルタイムバリデーション（input時）
+  const handleEmailChange = (value: string) => {
+    setEmail(value)
+    // エラーをクリア（リアルタイムでエラー表示しない）
+    if (error) {
+      setError("")
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,7 +63,7 @@ export function EmailRegistrationForm({ onSubmit, onBack, isLoading = false }: E
         label="メールアドレス"
         placeholder="example@email.com"
         value={email}
-        onChange={setEmail}
+        onChange={handleEmailChange}
         error={error}
         required
       />

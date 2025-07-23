@@ -26,24 +26,33 @@ export function PasswordChangeForm({ onSubmit, onCancel, isLoading = false }: Pa
     const newErrors: typeof errors = {}
 
     // 現在のパスワード
+    // パスワード - 必須チェック
     if (!currentPassword) {
       newErrors.currentPassword = "現在のパスワードを入力してください"
-    } else if (currentPassword.length < 6) {
-      newErrors.currentPassword = "パスワードは6文字以上で入力してください"
+    // パスワード - 最小桁チェック
+    } else if (currentPassword.length < 8) {
+      newErrors.currentPassword = "パスワードは8文字以上で入力してください"
+    // パスワード - 最大桁チェック
+    } else if (currentPassword.length > 50) {
+      newErrors.currentPassword = "パスワードは50文字以内で入力してください"
     }
 
     // 新しいパスワード
+    // パスワード - 必須チェック
     if (!newPassword) {
       newErrors.newPassword = "新しいパスワードを入力してください"
+    // パスワード - 最小桁チェック
     } else if (newPassword.length < 8) {
       newErrors.newPassword = "パスワードは8文字以上で入力してください"
-    } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(newPassword)) {
-      newErrors.newPassword = "パスワードは英数字を混在させてください"
+    // パスワード - 最大桁チェック
+    } else if (newPassword.length > 50) {
+      newErrors.newPassword = "パスワードは50文字以内で入力してください"
     } else if (newPassword === currentPassword) {
       newErrors.newPassword = "現在のパスワードと同じパスワードは使用できません"
     }
 
     // パスワード確認
+    // パスワード - 必須チェック
     if (!confirmPassword) {
       newErrors.confirmPassword = "パスワード確認を入力してください"
     } else if (newPassword !== confirmPassword) {
@@ -52,6 +61,53 @@ export function PasswordChangeForm({ onSubmit, onCancel, isLoading = false }: Pa
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
+  }
+
+  // リアルタイムバリデーション（input時）
+  const validateFieldOnInput = (field: keyof typeof errors, value: string) => {
+    const newErrors = { ...errors }
+    
+    if (field === 'currentPassword') {
+      // パスワード - 必須チェック（入力中は表示しない）
+      if (!value) {
+        // 入力中は必須エラーを表示しない
+      // パスワード - 最小桁チェック
+      } else if (value.length < 8) {
+        newErrors.currentPassword = "パスワードは8文字以上で入力してください"
+      // パスワード - 最大桁チェック
+      } else if (value.length > 50) {
+        newErrors.currentPassword = "パスワードは50文字以内で入力してください"
+      } else {
+        delete newErrors.currentPassword
+      }
+    }
+    
+    if (field === 'newPassword') {
+      // パスワード - 必須チェック（入力中は表示しない）
+      if (!value) {
+        // 入力中は必須エラーを表示しない
+      // パスワード - 最小桁チェック
+      } else if (value.length < 8) {
+        newErrors.newPassword = "パスワードは8文字以上で入力してください"
+      // パスワード - 最大桁チェック
+      } else if (value.length > 50) {
+        newErrors.newPassword = "パスワードは50文字以内で入力してください"
+      } else if (value === currentPassword) {
+        newErrors.newPassword = "現在のパスワードと同じパスワードは使用できません"
+      } else {
+        delete newErrors.newPassword
+      }
+    }
+    
+    if (field === 'confirmPassword') {
+      if (value && newPassword !== value) {
+        newErrors.confirmPassword = "パスワードが一致しません"
+      } else if (value && newPassword === value) {
+        delete newErrors.confirmPassword
+      }
+    }
+    
+    setErrors(newErrors)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -66,14 +122,9 @@ export function PasswordChangeForm({ onSubmit, onCancel, isLoading = false }: Pa
     if (field === "newPassword") setNewPassword(value)
     if (field === "confirmPassword") setConfirmPassword(value)
 
-    // エラーをクリア
-    if (errors[field]) {
-      setErrors({ ...errors, [field]: undefined })
-    }
-
-    // パスワード確認のエラーもクリア
-    if (field === "newPassword" && errors.confirmPassword) {
-      setErrors({ ...errors, confirmPassword: undefined })
+    // リアルタイムバリデーション
+    if (field === 'currentPassword' || field === 'newPassword' || field === 'confirmPassword') {
+      validateFieldOnInput(field, value)
     }
   }
 

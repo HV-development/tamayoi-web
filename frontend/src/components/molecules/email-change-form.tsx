@@ -34,8 +34,10 @@ export function EmailChangeForm({ currentEmail, onSubmit, onCancel, isLoading = 
     }
 
     // 新しいメールアドレス
+    // メールアドレス - 必須チェック
     if (!newEmail) {
       newErrors.newEmail = "新しいメールアドレスを入力してください"
+    // メールアドレス - メールフォーマットチェック
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
       newErrors.newEmail = "正しいメールアドレスを入力してください"
     } else if (newEmail === currentEmail) {
@@ -43,6 +45,7 @@ export function EmailChangeForm({ currentEmail, onSubmit, onCancel, isLoading = 
     }
 
     // メールアドレス確認
+    // メールアドレス - 必須チェック
     if (!confirmEmail) {
       newErrors.confirmEmail = "メールアドレス確認を入力してください"
     } else if (newEmail !== confirmEmail) {
@@ -51,6 +54,35 @@ export function EmailChangeForm({ currentEmail, onSubmit, onCancel, isLoading = 
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
+  }
+
+  // リアルタイムバリデーション（input時）
+  const validateFieldOnInput = (field: keyof typeof errors, value: string) => {
+    const newErrors = { ...errors }
+    
+    if (field === 'newEmail') {
+      // メールアドレス - 必須チェック
+      if (!value) {
+        // 入力中は必須エラーを表示しない
+      // メールアドレス - メールフォーマットチェック
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        newErrors.newEmail = "正しいメールアドレスを入力してください"
+      } else if (value === currentEmail) {
+        newErrors.newEmail = "現在のメールアドレスと同じです"
+      } else {
+        delete newErrors.newEmail
+      }
+    }
+    
+    if (field === 'confirmEmail') {
+      if (value && newEmail !== value) {
+        newErrors.confirmEmail = "メールアドレスが一致しません"
+      } else if (value && newEmail === value) {
+        delete newErrors.confirmEmail
+      }
+    }
+    
+    setErrors(newErrors)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -65,14 +97,9 @@ export function EmailChangeForm({ currentEmail, onSubmit, onCancel, isLoading = 
     if (field === "newEmail") setNewEmail(value)
     if (field === "confirmEmail") setConfirmEmail(value)
 
-    // エラーをクリア
-    if (errors[field]) {
-      setErrors({ ...errors, [field]: undefined })
-    }
-
-    // メールアドレス確認のエラーもクリア
-    if (field === "newEmail" && errors.confirmEmail) {
-      setErrors({ ...errors, confirmEmail: undefined })
+    // リアルタイムバリデーション
+    if (field === 'newEmail' || field === 'confirmEmail') {
+      validateFieldOnInput(field, value)
     }
   }
 

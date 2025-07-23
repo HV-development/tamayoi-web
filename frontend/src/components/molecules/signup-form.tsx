@@ -110,15 +110,19 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
     }
 
     // パスワード - 必須チェック、最小桁チェック、フォーマットチェック
+    // パスワード - 必須チェック
     if (!formData.password) {
       newErrors.password = "パスワードを入力してください"
+    // パスワード - 最小桁チェック
     } else if (formData.password.length < 8) {
       newErrors.password = "パスワードは8文字以上で入力してください"
-    } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(formData.password)) {
-      newErrors.password = "パスワードは英数字を混在させてください"
+    // パスワード - 最大桁チェック
+    } else if (formData.password.length > 50) {
+      newErrors.password = "パスワードは50文字以内で入力してください"
     }
 
     // パスワード確認 - パスワードと文字列が一致しているかチェック
+    // パスワード - 必須チェック
     if (!formData.passwordConfirm) {
       newErrors.passwordConfirm = "パスワード確認を入力してください"
     } else if (formData.password !== formData.passwordConfirm) {
@@ -245,7 +249,8 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         }
         break
       case 'password':
-        if (value && value.length >= 8 && /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(value)) {
+        // パスワード - 最小桁チェック、最大桁チェック
+        if (value && value.length >= 8 && value.length <= 50) {
           delete newErrors.password
         }
         // パスワードが変更されたらパスワード確認もチェック
