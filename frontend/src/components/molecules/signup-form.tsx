@@ -247,7 +247,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="メールアドレス"
         placeholder="example@email.com"
         value={formData.email}
-        onChange={(value) => updateFormData("email", value)}
+        onChange={(value) => handleInputChange("email", value)}
         error={errors.email}
         required
       />
@@ -258,7 +258,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="ニックネーム"
         placeholder="ニックネームを入力"
         value={formData.nickname}
-        onChange={(value) => updateFormData("nickname", value)}
+        onChange={(value) => handleInputChange("nickname", value)}
         error={errors.nickname}
         required
       />
@@ -275,7 +275,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
               type="text"
               placeholder="1234567"
               value={formData.postalCode}
-              onChange={(e) => updateFormData("postalCode", e.target.value)}
+              onChange={(e) => handleInputChange("postalCode", e.target.value)}
               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${
                 errors.postalCode ? "border-red-500" : "border-gray-300"
               }`}
@@ -298,7 +298,12 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       {formData.address && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">住所</label>
-          <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700">{formData.address}</div>
+          <div className={`px-4 py-3 border rounded-lg text-gray-700 ${
+            errors.address ? "border-red-500 bg-red-50" : "border-gray-200 bg-gray-50"
+          }`}>
+            {formData.address}
+          </div>
+          {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
         </div>
       )}
 
@@ -306,7 +311,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       <DateInput
         label="生年月日"
         value={formData.birthDate}
-        onChange={(value) => updateFormData("birthDate", value)}
+        onChange={(value) => handleInputChange("birthDate", value)}
         error={errors.birthDate}
         required
       />
@@ -317,7 +322,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="性別"
         options={genderOptions}
         value={formData.gender}
-        onChange={(value) => updateFormData("gender", value)}
+        onChange={(value) => handleInputChange("gender", value)}
         error={errors.gender}
         required
       />
@@ -328,7 +333,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="パスワード"
         placeholder="8文字以上の英数字"
         value={formData.password}
-        onChange={(value) => updateFormData("password", value)}
+        onChange={(value) => handleInputChange("password", value)}
         error={errors.password}
         required
       />
@@ -339,7 +344,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="パスワード確認"
         placeholder="パスワードを再入力"
         value={formData.passwordConfirm}
-        onChange={(value) => updateFormData("passwordConfirm", value)}
+        onChange={(value) => handleInputChange("passwordConfirm", value)}
         error={errors.passwordConfirm}
         required
       />
