@@ -137,12 +137,12 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
       // 新しくスクリプトを読み込む
       console.log('Loading Google Maps API script')
       const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDdyI7pZ8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z&callback=initMap&libraries=geometry`
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap&libraries=geometry`
       script.async = true
       script.defer = true
       script.onerror = () => {
         console.error('Google Maps APIの読み込みに失敗しました')
-        console.error('APIキー:', 'AIzaSyDdyI7pZ8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z')
+        console.error('APIキー:', process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)
         console.error('スクリプトURL:', script.src)
       }
       
