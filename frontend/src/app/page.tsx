@@ -241,6 +241,7 @@ export default function HomePage() {
 
   const handleHistoryClose = () => {
     setIsHistoryOpen(false)
+        initialData={signupData}
   }
 
   const handleFavoriteToggle = (storeId: string) => {
