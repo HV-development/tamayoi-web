@@ -134,7 +134,7 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
       // 新しくスクリプトを読み込む
       console.log('Loading Google Maps API script')
       const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBjsINSWCUyOJkMOqQIvPh5-VgBZQTW6ks&callback=initMap&libraries=geometry`
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDdyI7pZ8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z&callback=initMap&libraries=geometry`
       script.async = true
       script.defer = true
       script.onerror = () => {
