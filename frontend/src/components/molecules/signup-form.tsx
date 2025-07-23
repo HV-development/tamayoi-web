@@ -268,18 +268,19 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         {errors.postalCode && <p className="mt-1 text-sm text-red-500">{errors.postalCode}</p>}
       </div>
 
-      {/* 検索結果の住所表示 */}
-      {formData.address && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">住所</label>
-          <div className={`px-4 py-3 border rounded-lg text-gray-700 ${
-            errors.address ? "border-red-500 bg-red-50" : "border-gray-200 bg-gray-50"
-          }`}>
-            {formData.address}
-          </div>
-          {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
+      {/* 住所表示 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          住所
+          <span className="text-red-500 ml-1">*</span>
+        </label>
+        <div className={`px-4 py-3 border rounded-lg text-gray-700 min-h-[50px] ${
+          errors.address ? "border-red-500 bg-red-50" : "border-gray-200 bg-gray-50"
+        }`}>
+          {formData.address || "住所検索ボタンを押して住所を取得してください"}
         </div>
-      )}
+        {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
+      </div>
 
       {/* 生年月日 */}
       <DateInput
