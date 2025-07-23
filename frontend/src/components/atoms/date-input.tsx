@@ -10,6 +10,20 @@ interface DateInputProps {
 }
 
 export function DateInput({ value, onChange, label, error, required = false, className = "" }: DateInputProps) {
+  // yyyy-MM-dd形式をyyyy/MM/dd形式に変換して表示
+  const formatDateForDisplay = (dateValue: string) => {
+    if (!dateValue) return ""
+    // yyyy-MM-dd形式の場合はyyyy/MM/dd形式に変換
+    return dateValue.replace(/-/g, "/")
+  }
+
+  // yyyy/MM/dd形式をyyyy-MM-dd形式に変換してonChangeに渡す
+  const handleDateChange = (inputValue: string) => {
+    // yyyy/MM/dd形式をyyyy-MM-dd形式に変換
+    const formattedValue = inputValue.replace(/\//g, "-")
+    onChange(formattedValue)
+  }
+
   return (
     <div className={`w-full ${className}`}>
       {label && (
@@ -20,9 +34,10 @@ export function DateInput({ value, onChange, label, error, required = false, cla
       )}
       <div className="max-w-xs">
         <input
-          type="date"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
+          type="text"
+          placeholder="yyyy/MM/dd"
+          value={formatDateForDisplay(value)}
+          onChange={(e) => handleDateChange(e.target.value)}
           required={required}
           className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${
             error ? "border-red-500" : "border-gray-300"
