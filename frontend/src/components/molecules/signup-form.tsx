@@ -45,6 +45,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
   // initialDataが変更された際にフォームデータを更新
   useEffect(() => {
     if (initialData) {
+      console.log('initialData received:', initialData)
       setFormData({
         nickname: initialData.nickname || "",
         password: initialData.password || "",
@@ -60,6 +61,8 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       if (initialData.address) {
         setHasSearchedAddress(true)
       }
+    } else {
+      console.log('No initialData provided')
     }
   }, [initialData])
 

@@ -161,6 +161,7 @@ export default function HomePage() {
       password: "",
       passwordConfirm: "",
     }
+    console.log('Setting signup data for edit:', dataWithoutPassword)
     setSignupData(dataWithoutPassword)
     setCurrentView("signup")
   }

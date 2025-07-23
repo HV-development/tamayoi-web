@@ -292,6 +292,7 @@ export function MapLayout({
   if (currentView === "signup") {
     return (
       <SignupLayout
+        initialData={signupData}
         onSubmit={onSignupSubmit}
         onCancel={onSignupCancel}
         onLogoClick={onLogoClick}
