@@ -3,7 +3,6 @@
 import { Button } from "../atoms/button"
 
 interface SignupFormData {
-  email: string
   nickname: string
   password: string
   passwordConfirm: string
@@ -38,7 +37,6 @@ export function ConfirmationDisplay({ data, onRegister, onEdit, isLoading = fals
   }
 
   const confirmationItems = [
-    { label: "メールアドレス", value: data.email },
     { label: "ニックネーム", value: data.nickname },
     { label: "郵便番号", value: data.postalCode },
     { label: "住所", value: data.address },

@@ -3,7 +3,6 @@
 import { SignupContainer } from "../organisms/signup-container"
 
 interface SignupFormData {
-  email: string
   nickname: string
   password: string
   passwordConfirm: string

@@ -1,7 +1,6 @@
 import { ConfirmationContainer } from "../organisms/confirmation-container"
 
 interface SignupFormData {
-  email: string
   nickname: string
   password: string
   passwordConfirm: string

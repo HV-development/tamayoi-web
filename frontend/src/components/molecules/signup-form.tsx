@@ -9,7 +9,6 @@ import { RadioButton } from "../atoms/radio-button"
 import { DateInput } from "../atoms/date-input"
 
 interface SignupFormData {
-  email: string
   nickname: string
   password: string
   passwordConfirm: string
@@ -29,7 +28,6 @@ interface SignupFormProps {
 
 export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false }: SignupFormProps) {
   const [formData, setFormData] = useState<SignupFormData>({
-    email: "",
     nickname: "",
     password: "",
     passwordConfirm: "",
@@ -48,7 +46,6 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
   useEffect(() => {
     if (initialData) {
       setFormData({
-        email: initialData.email || "",
         nickname: initialData.nickname || "",
         password: initialData.password || "",
         passwordConfirm: initialData.passwordConfirm || "",
@@ -73,13 +70,6 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
     // ニックネーム - 必須チェック
     if (!formData.nickname.trim()) {
       newErrors.nickname = "ニックネームを入力してください"
-    }
-
-    // メールアドレス - 必須チェック、メールフォーマットチェック
-    if (!formData.email) {
-      newErrors.email = "メールアドレスを入力してください"
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "正しいメールアドレスを入力してください"
     }
 
     // 郵便番号 - 必須チェック、桁数チェック
@@ -179,11 +169,6 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
           delete newErrors.nickname
         }
         break
-      case 'email':
-        if (value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          delete newErrors.email
-        }
-        break
       case 'postalCode':
         if (value && /^\d{7}$/.test(value.replace(/-/g, ""))) {
           delete newErrors.postalCode
@@ -241,17 +226,6 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* メールアドレス */}
-      <Input
-        type="email"
-        label="メールアドレス"
-        placeholder="example@email.com"
-        value={formData.email}
-        onChange={(value) => handleInputChange("email", value)}
-        error={errors.email}
-        required
-      />
-
       {/* ニックネーム */}
       <Input
         type="text"

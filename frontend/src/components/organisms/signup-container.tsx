@@ -4,7 +4,6 @@ import { HeaderLogo } from "../atoms/header-logo"
 import { SignupForm } from "../molecules/signup-form"
 
 interface SignupFormData {
-  email: string
   nickname: string
   password: string
   passwordConfirm: string
