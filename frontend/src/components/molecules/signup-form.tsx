@@ -79,9 +79,9 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       newErrors.postalCode = "郵便番号は7桁の数字で入力してください"
     }
 
-    // 住所検索 - 存在チェック
-    if (!formData.address || !hasSearchedAddress) {
-      newErrors.address = "住所検索ボタンを押して住所を取得してください"
+    // 住所 - 必須チェック
+    if (!formData.address.trim()) {
+      newErrors.address = "住所を入力してください"
     }
 
     // 生年月日 - 必須チェック、日付形式チェック
@@ -147,7 +147,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
     // 住所検索のシミュレーション
     setTimeout(() => {
       const mockAddress = "埼玉県さいたま市大宮区桜木町1-7-5"
-      setFormData({ ...formData, address: mockAddress })
+      setFormData(prev => ({ ...prev, address: mockAddress }))
       setHasSearchedAddress(true)
       // 住所が取得できたらエラーをクリア
       if (errors.address) {
@@ -173,10 +173,10 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         if (value && /^\d{7}$/.test(value.replace(/-/g, ""))) {
           delete newErrors.postalCode
         }
-        // 郵便番号が変更されたら住所検索をリセット
-        if (hasSearchedAddress) {
-          setHasSearchedAddress(false)
-          setFormData(prev => ({ ...prev, address: "" }))
+        break
+      case 'address':
+        if (value.trim()) {
+          delete newErrors.address
         }
         break
       case 'birthDate':
@@ -219,10 +219,10 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
 
   // 住所が自動入力された場合の処理
   useEffect(() => {
-    if (formData.address && hasSearchedAddress && errors.address) {
+    if (formData.address.trim() && errors.address) {
       setErrors(prev => ({ ...prev, address: undefined }))
     }
-  }, [formData.address, hasSearchedAddress, errors.address])
+  }, [formData.address, errors.address])
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -268,17 +268,21 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         {errors.postalCode && <p className="mt-1 text-sm text-red-500">{errors.postalCode}</p>}
       </div>
 
-      {/* 住所表示 */}
+      {/* 住所入力 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           住所
           <span className="text-red-500 ml-1">*</span>
         </label>
-        <div className={`px-4 py-3 border rounded-lg text-gray-700 min-h-[50px] ${
-          errors.address ? "border-red-500 bg-red-50" : "border-gray-200 bg-gray-50"
-        }`}>
-          {formData.address || "住所検索ボタンを押して住所を取得してください"}
-        </div>
+        <input
+          type="text"
+          placeholder="住所を入力するか、上記の住所検索ボタンをご利用ください"
+          value={formData.address}
+          onChange={(e) => handleInputChange("address", e.target.value)}
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${
+            errors.address ? "border-red-500" : "border-gray-300"
+          }`}
+        />
         {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
       </div>
 
