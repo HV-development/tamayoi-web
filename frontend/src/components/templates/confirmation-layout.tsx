@@ -1,13 +1,14 @@
 import { ConfirmationContainer } from "../organisms/confirmation-container"
 
 interface SignupFormData {
-  registeredStore?: string
+  email: string
   nickname: string
+  password: string
+  passwordConfirm: string
   postalCode: string
   address: string
   birthDate: string
   gender: string
-  password: string
   saitamaAppId: string
 }
 

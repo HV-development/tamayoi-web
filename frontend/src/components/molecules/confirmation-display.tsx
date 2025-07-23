@@ -3,14 +3,14 @@
 import { Button } from "../atoms/button"
 
 interface SignupFormData {
-  registeredStore?: string
+  email: string
   nickname: string
+  password: string
+  passwordConfirm: string
   postalCode: string
   address: string
   birthDate: string
   gender: string
-  password: string
-  passwordConfirm: string
   saitamaAppId: string
 }
 
@@ -38,7 +38,7 @@ export function ConfirmationDisplay({ data, onRegister, onEdit, isLoading = fals
   }
 
   const confirmationItems = [
-    ...(data.registeredStore ? [{ label: "登録店舗", value: data.registeredStore }] : []),
+    { label: "メールアドレス", value: data.email },
     { label: "ニックネーム", value: data.nickname },
     { label: "郵便番号", value: data.postalCode },
     { label: "住所", value: data.address },

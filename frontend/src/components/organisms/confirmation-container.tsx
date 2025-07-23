@@ -4,13 +4,14 @@ import { HeaderLogo } from "../atoms/header-logo"
 import { ConfirmationDisplay } from "../molecules/confirmation-display"
 
 interface SignupFormData {
-  registeredStore?: string
+  email: string
   nickname: string
+  password: string
+  passwordConfirm: string
   postalCode: string
   address: string
   birthDate: string
   gender: string
-  password: string
   saitamaAppId: string
 }
 

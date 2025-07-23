@@ -9,14 +9,14 @@ import { RadioButton } from "../atoms/radio-button"
 import { DateInput } from "../atoms/date-input"
 
 interface SignupFormData {
-  registeredStore?: string
+  email: string
   nickname: string
+  password: string
+  passwordConfirm: string
   postalCode: string
   address: string
   birthDate: string
   gender: string
-  password: string
-  passwordConfirm: string
   saitamaAppId: string
 }
 
@@ -29,14 +29,14 @@ interface SignupFormProps {
 
 export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false }: SignupFormProps) {
   const [formData, setFormData] = useState<SignupFormData>({
-    registeredStore: "",
+    email: "",
     nickname: "",
+    password: "",
+    passwordConfirm: "",
     postalCode: "",
     address: "",
     birthDate: "",
     gender: "",
-    password: "",
-    passwordConfirm: "",
     saitamaAppId: "",
   })
 
@@ -47,14 +47,14 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
   useEffect(() => {
     if (initialData) {
       setFormData({
-        registeredStore: initialData.registeredStore || "",
+        email: initialData.email || "",
         nickname: initialData.nickname || "",
+        password: initialData.password || "",
+        passwordConfirm: initialData.passwordConfirm || "",
         postalCode: initialData.postalCode || "",
         address: initialData.address || "",
         birthDate: initialData.birthDate || "",
         gender: initialData.gender || "",
-        password: initialData.password || "",
-        passwordConfirm: initialData.passwordConfirm || "",
         saitamaAppId: initialData.saitamaAppId || "",
       })
     }
@@ -68,6 +68,13 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
 
   const validateForm = () => {
     const newErrors: Partial<SignupFormData> = {}
+
+    // メールアドレス
+    if (!formData.email) {
+      newErrors.email = "メールアドレスを入力してください"
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "正しいメールアドレスを入力してください"
+    }
 
     // ニックネーム
     if (!formData.nickname) {
@@ -150,15 +157,16 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* 登録店舗（QRコード読み込み時のみ表示） */}
-      {formData.registeredStore && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">登録店舗</label>
-          <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700">
-            {formData.registeredStore}
-          </div>
-        </div>
-      )}
+      {/* メールアドレス */}
+      <Input
+        type="email"
+        label="メールアドレス"
+        placeholder="example@email.com"
+        value={formData.email}
+        onChange={(value) => updateFormData("email", value)}
+        error={errors.email}
+        required
+      />
 
       {/* ニックネーム */}
       <Input

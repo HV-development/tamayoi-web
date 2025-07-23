@@ -3,13 +3,14 @@
 import { SignupContainer } from "../organisms/signup-container"
 
 interface SignupFormData {
-  registeredStore?: string
+  email: string
   nickname: string
+  password: string
+  passwordConfirm: string
   postalCode: string
   address: string
   birthDate: string
   gender: string
-  password: string
   saitamaAppId: string
 }
 
