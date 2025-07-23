@@ -113,6 +113,11 @@ interface MapLayoutProps {
   isSuccessModalOpen: boolean
   onSuccessModalClose: () => void
   onProfileEditSubmit?: (data: any) => void
+  onEmailChangeSubmit?: (currentPassword: string, newEmail: string) => void
+  onPasswordChangeSubmit?: (currentPassword: string, newPassword: string) => void
+  emailChangeStep?: "form" | "complete"
+  passwordChangeStep?: "form" | "complete"
+  newEmail?: string
 }
 
 export function MapLayout({
@@ -190,6 +195,11 @@ export function MapLayout({
   isSuccessModalOpen,
   onSuccessModalClose,
   onProfileEditSubmit = () => {},
+  onEmailChangeSubmit = () => {},
+  onPasswordChangeSubmit = () => {},
+  emailChangeStep = "form",
+  passwordChangeStep = "form",
+  newEmail = "",
 }: MapLayoutProps) {
   if (currentView === "password-reset") {
     return (
@@ -255,6 +265,11 @@ export function MapLayout({
         onUseSameCoupon={() => {}}
         onLogoClick={onLogoClick}
         onProfileEditSubmit={onProfileEditSubmit || (() => {})}
+        onEmailChangeSubmit={onEmailChangeSubmit}
+        onPasswordChangeSubmit={onPasswordChangeSubmit}
+        emailChangeStep={emailChangeStep}
+        passwordChangeStep={passwordChangeStep}
+        newEmail={newEmail}
       />
     )
   }

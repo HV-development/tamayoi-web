@@ -8,6 +8,8 @@ import { UsageHistoryList } from "../molecules/usage-history-list"
 import { PaymentHistoryList } from "../molecules/payment-history-list"
 import type { User as UserType, Plan, UsageHistory, PaymentHistory } from "../../types/user"
 import { ProfileEditLayout } from "../templates/profile-edit-layout"
+import { EmailChangeLayout } from "../templates/email-change-layout"
+import { PasswordChangeLayout } from "../templates/password-change-layout"
 
 interface MyPageContainerProps {
   user: UserType
@@ -36,6 +38,11 @@ interface MyPageContainerProps {
   onUseSameCoupon: (couponId: string) => void
   onLogoClick: () => void
   onProfileEditSubmit: (data: any) => void
+  onEmailChangeSubmit?: (currentPassword: string, newEmail: string) => void
+  onPasswordChangeSubmit?: (currentPassword: string, newPassword: string) => void
+  emailChangeStep?: "form" | "complete"
+  passwordChangeStep?: "form" | "complete"
+  newEmail?: string
 }
 
 export function MyPageContainer({
@@ -58,6 +65,11 @@ export function MyPageContainer({
   onUseSameCoupon,
   onLogoClick,
   onProfileEditSubmit,
+  onEmailChangeSubmit = () => {},
+  onPasswordChangeSubmit = () => {},
+  emailChangeStep = "form",
+  passwordChangeStep = "form",
+  newEmail = "",
 }: MyPageContainerProps) {
   if (currentView === "profile-edit") {
     return (
@@ -66,6 +78,35 @@ export function MyPageContainer({
         onSubmit={onProfileEditSubmit}
         onCancel={() => onViewChange("main")}
         onLogoClick={onLogoClick}
+      />
+    )
+  }
+
+  if (currentView === "email-change") {
+    return (
+      <EmailChangeLayout
+        currentStep={emailChangeStep}
+        currentEmail={user.email}
+        newEmail={newEmail}
+        onSubmit={onEmailChangeSubmit}
+        onCancel={() => onViewChange("main")}
+        onBackToMyPage={() => onViewChange("main")}
+        onResend={() => {}}
+        onLogoClick={onLogoClick}
+        isLoading={false}
+      />
+    )
+  }
+
+  if (currentView === "password-change") {
+    return (
+      <PasswordChangeLayout
+        currentStep={passwordChangeStep}
+        onSubmit={onPasswordChangeSubmit}
+        onCancel={() => onViewChange("main")}
+        onBackToMyPage={() => onViewChange("main")}
+        onLogoClick={onLogoClick}
+        isLoading={false}
       />
     )
   }

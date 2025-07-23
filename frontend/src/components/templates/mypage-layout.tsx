@@ -29,6 +29,11 @@ interface MyPageLayoutProps {
   onUseSameCoupon: (couponId: string) => void
   onLogoClick: () => void
   onProfileEditSubmit: (data: any) => void
+  onEmailChangeSubmit?: (currentPassword: string, newEmail: string) => void
+  onPasswordChangeSubmit?: (currentPassword: string, newPassword: string) => void
+  emailChangeStep?: "form" | "complete"
+  passwordChangeStep?: "form" | "complete"
+  newEmail?: string
 }
 
 export function MyPageLayout({
@@ -52,6 +57,11 @@ export function MyPageLayout({
   onWithdraw,
   onLogoClick,
   onProfileEditSubmit,
+  onEmailChangeSubmit,
+  onPasswordChangeSubmit,
+  emailChangeStep,
+  passwordChangeStep,
+  newEmail,
 }: MyPageLayoutProps) {
   return (
     <MyPageContainer
@@ -74,6 +84,11 @@ export function MyPageLayout({
       onUseSameCoupon={onUseSameCoupon}
       onLogoClick={onLogoClick}
       onProfileEditSubmit={onProfileEditSubmit}
+      onEmailChangeSubmit={onEmailChangeSubmit}
+      onPasswordChangeSubmit={onPasswordChangeSubmit}
+      emailChangeStep={emailChangeStep}
+      passwordChangeStep={passwordChangeStep}
+      newEmail={newEmail}
     />
   )
 }

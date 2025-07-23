@@ -41,6 +41,9 @@ export default function HomePage() {
     | "plan-management"
     | "plan-change"
   >("main")
+  const [emailChangeStep, setEmailChangeStep] = useState<"form" | "complete">("form")
+  const [passwordChangeStep, setPasswordChangeStep] = useState<"form" | "complete">("form")
+  const [newEmail, setNewEmail] = useState("")
 
   const [isCouponListOpen, setIsCouponListOpen] = useState(false)
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
@@ -274,11 +277,13 @@ export default function HomePage() {
   }
 
   const handleChangeEmail = () => {
-    console.log("メールアドレス変更")
+    setEmailChangeStep("form")
+    setMyPageView("email-change")
   }
 
   const handleChangePassword = () => {
-    console.log("パスワード変更")
+    setPasswordChangeStep("form")
+    setMyPageView("password-change")
   }
 
   const handleViewPlan = () => {
@@ -428,6 +433,25 @@ export default function HomePage() {
     }, 1500)
   }
 
+  const handleEmailChangeSubmit = async (currentPassword: string, newEmail: string) => {
+    setIsLoading(true)
+    setTimeout(() => {
+      console.log("メールアドレス変更:", { currentPassword, newEmail })
+      setNewEmail(newEmail)
+      setEmailChangeStep("complete")
+      setIsLoading(false)
+    }, 1500)
+  }
+
+  const handlePasswordChangeSubmit = async (currentPassword: string, newPassword: string) => {
+    setIsLoading(true)
+    setTimeout(() => {
+      console.log("パスワード変更:", { currentPassword, newPassword })
+      setPasswordChangeStep("complete")
+      setIsLoading(false)
+    }, 1500)
+  }
+
   return (
     <MapLayout
       selectedArea={selectedArea}
@@ -506,6 +530,11 @@ export default function HomePage() {
       onCancelCoupon={handleCancelCoupon}
       onSuccessModalClose={handleSuccessModalClose}
       onProfileEditSubmit={handleProfileEditSubmit}
+      onEmailChangeSubmit={handleEmailChangeSubmit}
+      onPasswordChangeSubmit={handlePasswordChangeSubmit}
+      emailChangeStep={emailChangeStep}
+      passwordChangeStep={passwordChangeStep}
+      newEmail={newEmail}
     />
   )
 }
