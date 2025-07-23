@@ -155,7 +155,13 @@ export default function HomePage() {
   }
 
   const handleConfirmEdit = () => {
-    // 登録内容を保持したまま新規登録フォームに戻る
+    // パスワード以外の登録内容を保持したまま新規登録フォームに戻る
+    const dataWithoutPassword = {
+      ...signupData,
+      password: "",
+      passwordConfirm: "",
+    }
+    setSignupData(dataWithoutPassword)
     setCurrentView("signup")
   }
 
