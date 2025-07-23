@@ -99,7 +99,7 @@ export default function HomePage() {
   }
 
   const handleSignup = () => {
-    setCurrentView("signup")
+    setCurrentView("email-registration")
   }
 
   const handleForgotPassword = () => {
@@ -123,9 +123,8 @@ export default function HomePage() {
 
   const handleEmailSubmit = (email: string) => {
     console.log("メール送信:", email)
-    setTimeout(() => {
-      setCurrentView("signup")
-    }, 1000)
+    // メール登録をスキップして直接新規登録フォームへ
+    setCurrentView("signup")
   }
 
   const handleSignupSubmit = (data: any) => {
