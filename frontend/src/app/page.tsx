@@ -149,11 +149,13 @@ export default function HomePage() {
       setPaymentHistory([])
       setIsLoading(false)
       setSignupData(null)
-      setCurrentView("subscription")
+      setCurrentView("map")
+      setActiveTab("map")
     }, 2000)
   }
 
   const handleConfirmEdit = () => {
+    // 登録内容を保持したまま新規登録フォームに戻る
     setCurrentView("signup")
   }
 
