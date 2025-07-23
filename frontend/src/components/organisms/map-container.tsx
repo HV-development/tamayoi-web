@@ -106,18 +106,46 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
       })
     }
 
-    // Google Maps APIスクリプトの読み込み
-    if (!window.google) {
+    // Google Maps APIの読み込み状況を確認
+    const checkGoogleMapsAPI = () => {
+      // 既にGoogle Maps APIが読み込まれている場合
+      if (window.google && window.google.maps) {
+        console.log('Google Maps API is already loaded')
+        initializeMap()
+        return
+      }
+
+      // 既にスクリプトが読み込み中の場合
+      const existingScript = document.querySelector('script[src*="maps.googleapis.com"]')
+      if (existingScript) {
+        console.log('Google Maps API script is already loading')
+        // 読み込み完了を待つ
+        const checkLoaded = () => {
+          if (window.google && window.google.maps) {
+            initializeMap()
+          } else {
+            setTimeout(checkLoaded, 100)
+          }
+        }
+        checkLoaded()
+        return
+      }
+
+      // 新しくスクリプトを読み込む
+      console.log('Loading Google Maps API script')
       const script = document.createElement('script')
       script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBjsINSWCUyOJkMOqQIvPh5-VgBZQTW6ks&callback=initMap&libraries=geometry`
       script.async = true
       script.defer = true
+      script.onerror = () => {
+        console.error('Failed to load Google Maps API')
+      }
       
       window.initMap = initializeMap
       document.head.appendChild(script)
-    } else {
-      initializeMap()
     }
+
+    checkGoogleMapsAPI()
 
     return () => {
       // クリーンアップ
