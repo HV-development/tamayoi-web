@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Input } from "../atoms/input"
 import { Button } from "../atoms/button"
 import { RadioButton } from "../atoms/radio-button"
@@ -40,7 +40,9 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
 
   const [errors, setErrors] = useState<Partial<SignupFormData>>({})
   const [isSearchingAddress, setIsSearchingAddress] = useState(false)
-  const [hasSearchedAddress, setHasSearchedAddress] = useState(false)
+  
+  // 住所フィールドへの参照を追加
+  const addressInputRef = useRef<HTMLInputElement>(null)
 
   // initialDataが変更された際にフォームデータを更新
   useEffect(() => {
@@ -56,11 +58,6 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         gender: initialData.gender || "",
         saitamaAppId: initialData.saitamaAppId || "",
       })
-      
-      // 住所が設定されている場合は検索済みフラグを立てる
-      if (initialData.address) {
-        setHasSearchedAddress(true)
-      }
     } else {
       console.log('No initialData provided')
     }
@@ -140,59 +137,65 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
   }
 
   const handleAddressSearch = async () => {
-    // 郵便番号のバリデーション
-    if (!formData.postalCode.trim()) {
+    const cleanedPostalCode = formData.postalCode.replace(/-/g, "")
+    
+    // 郵便番号の基本バリデーション
+    if (!formData.postalCode) {
       setErrors({ ...errors, postalCode: "郵便番号を入力してください" })
       return
     }
     
-    const cleanedPostalCode = formData.postalCode.replace(/-/g, "")
     if (!/^\d{7}$/.test(cleanedPostalCode)) {
       setErrors({ ...errors, postalCode: "郵便番号は7桁の数字で入力してください" })
       return
     }
 
-    // 郵便番号エラーをクリア
-    if (errors.postalCode) {
-      setErrors({ ...errors, postalCode: undefined })
-    }
+    // 郵便番号が正しい場合はエラーをクリア
+    setErrors(prev => ({ ...prev, postalCode: undefined }))
 
     setIsSearchingAddress(true)
     
     try {
-      // 実際の住所検索API呼び出し（現在はモック）
+      // モック住所データ
       const mockAddresses: Record<string, string> = {
         "3300854": "埼玉県さいたま市大宮区桜木町",
         "3300063": "埼玉県さいたま市浦和区高砂",
         "3300846": "埼玉県さいたま市大宮区大門町",
-        "3380001": "埼玉県さいたま市中央区上落合",
+        "3380001": "埼玉県さいたま市中央区本町東",
         "3360021": "埼玉県さいたま市南区別所",
         "3370051": "埼玉県さいたま市見沼区東大宮",
         "3310823": "埼玉県さいたま市北区日進町",
         "3380832": "埼玉県さいたま市桜区西堀",
         "3310052": "埼玉県さいたま市西区三橋",
-        "3370032": "埼玉県さいたま市見沼区東新井",
+        "3390067": "埼玉県さいたま市岩槻区西町"
       }
       
-      // 1秒後に結果を返すシミュレーション
+      // 住所検索のシミュレーション（1秒後に結果を返す）
       setTimeout(() => {
         const foundAddress = mockAddresses[cleanedPostalCode]
         
         if (foundAddress) {
-          // 住所を更新
-          setFormData(prev => ({ ...prev, address: foundAddress }))
-          setHasSearchedAddress(true)
-          
-          // 住所エラーをクリア
-          if (errors.address) {
-            setErrors(prev => ({ ...prev, address: undefined }))
-          }
+          // 住所が見つかった場合
+          setFormData(prev => ({ 
+            ...prev, 
+            address: foundAddress 
+          }))
+          setErrors(prev => ({ ...prev, address: undefined }))
+          console.log("住所検索成功:", foundAddress)
         } else {
           // 住所が見つからない場合
-          setErrors(prev => ({ 
-            ...prev, 
-            postalCode: "該当する住所が見つかりませんでした。手入力で住所を入力してください。" 
+          console.log("住所が見つかりません:", cleanedPostalCode)
+          setErrors(prev => ({
+            ...prev,
+            address: "該当する住所が見つかりませんでした。手入力で住所を入力してください。"
           }))
+          
+          // 住所フィールドにフォーカスを移す
+          setTimeout(() => {
+            if (addressInputRef.current) {
+              addressInputRef.current.focus()
+            }
+          }, 100)
         }
         
         setIsSearchingAddress(false)
@@ -200,10 +203,18 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       
     } catch (error) {
       console.error("住所検索エラー:", error)
-      setErrors(prev => ({ 
-        ...prev, 
-        postalCode: "住所検索に失敗しました。手入力で住所を入力してください。" 
+      setErrors(prev => ({
+        ...prev,
+        address: "住所検索に失敗しました。手入力で住所を入力してください。"
       }))
+      
+      // エラー時も住所フィールドにフォーカス
+      setTimeout(() => {
+        if (addressInputRef.current) {
+          addressInputRef.current.focus()
+        }
+      }, 100)
+      
       setIsSearchingAddress(false)
     }
   }
@@ -327,6 +338,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
           <span className="text-red-500 ml-1">*</span>
         </label>
         <input
+          ref={addressInputRef}
           type="text"
           placeholder="住所を入力するか、上記の住所検索ボタンをご利用ください"
           value={formData.address}
