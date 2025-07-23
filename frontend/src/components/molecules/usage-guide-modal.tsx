@@ -59,6 +59,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
       onClose()
     }
   }
+
   return (
     <>
       {/* オーバーレイ */}
