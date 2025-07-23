@@ -42,6 +42,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
 
   const [errors, setErrors] = useState<Partial<SignupFormData>>({})
   const [isSearchingAddress, setIsSearchingAddress] = useState(false)
+  const [hasSearchedAddress, setHasSearchedAddress] = useState(false)
 
   // initialDataが変更された際にフォームデータを更新
   useEffect(() => {
@@ -69,40 +70,51 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
   const validateForm = () => {
     const newErrors: Partial<SignupFormData> = {}
 
-    // メールアドレス
+    // ニックネーム - 必須チェック
+    if (!formData.nickname.trim()) {
+      newErrors.nickname = "ニックネームを入力してください"
+    }
+
+    // メールアドレス - 必須チェック、メールフォーマットチェック
     if (!formData.email) {
       newErrors.email = "メールアドレスを入力してください"
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "正しいメールアドレスを入力してください"
     }
 
-    // ニックネーム
-    if (!formData.nickname) {
-      newErrors.nickname = "ニックネームを入力してください"
-    } else if (formData.nickname.length > 20) {
-      newErrors.nickname = "ニックネームは20文字以内で入力してください"
-    } else if (formData.nickname.includes("-")) {
-      newErrors.nickname = "ニックネームにハイフンは使用できません"
-    }
-
-    // 郵便番号
+    // 郵便番号 - 必須チェック、桁数チェック
     if (!formData.postalCode) {
       newErrors.postalCode = "郵便番号を入力してください"
     } else if (!/^\d{7}$/.test(formData.postalCode.replace(/-/g, ""))) {
       newErrors.postalCode = "郵便番号は7桁の数字で入力してください"
     }
 
-    // 生年月日
-    if (!formData.birthDate) {
-      newErrors.birthDate = "生年月日を入力してください"
+    // 住所検索 - 存在チェック
+    if (!formData.address || !hasSearchedAddress) {
+      newErrors.address = "住所検索ボタンを押して住所を取得してください"
     }
 
-    // 性別
+    // 生年月日 - 必須チェック、日付形式チェック
+    if (!formData.birthDate) {
+      newErrors.birthDate = "生年月日を入力してください"
+    } else {
+      const birthDate = new Date(formData.birthDate)
+      const today = new Date()
+      if (isNaN(birthDate.getTime())) {
+        newErrors.birthDate = "正しい日付形式で入力してください"
+      } else if (birthDate >= today) {
+        newErrors.birthDate = "生年月日は今日より前の日付を入力してください"
+      } else if (today.getFullYear() - birthDate.getFullYear() > 120) {
+        newErrors.birthDate = "正しい生年月日を入力してください"
+      }
+    }
+
+    // 性別 - 選択チェック
     if (!formData.gender) {
       newErrors.gender = "性別を選択してください"
     }
 
-    // パスワード
+    // パスワード - 必須チェック、最小桁チェック、フォーマットチェック
     if (!formData.password) {
       newErrors.password = "パスワードを入力してください"
     } else if (formData.password.length < 8) {
@@ -111,7 +123,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       newErrors.password = "パスワードは英数字を混在させてください"
     }
 
-    // パスワード確認
+    // パスワード確認 - パスワードと文字列が一致しているかチェック
     if (!formData.passwordConfirm) {
       newErrors.passwordConfirm = "パスワード確認を入力してください"
     } else if (formData.password !== formData.passwordConfirm) {
@@ -130,8 +142,14 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
   }
 
   const handleAddressSearch = async () => {
-    if (!formData.postalCode || !/^\d{7}$/.test(formData.postalCode.replace(/-/g, ""))) {
-      setErrors({ ...errors, postalCode: "正しい郵便番号を入力してください" })
+    // 郵便番号のバリデーション
+    if (!formData.postalCode.trim()) {
+      setErrors({ ...errors, postalCode: "郵便番号を入力してください" })
+      return
+    }
+    
+    if (!/^\d{7}$/.test(formData.postalCode.replace(/-/g, ""))) {
+      setErrors({ ...errors, postalCode: "郵便番号は7桁の数字で入力してください" })
       return
     }
 
@@ -140,12 +158,86 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
     setTimeout(() => {
       const mockAddress = "埼玉県さいたま市大宮区桜木町1-7-5"
       setFormData({ ...formData, address: mockAddress })
+      setHasSearchedAddress(true)
+      // 住所が取得できたらエラーをクリア
+      if (errors.address) {
+        setErrors({ ...errors, address: undefined })
+      }
       setIsSearchingAddress(false)
     }, 1000)
   }
 
   const updateFormData = (field: keyof SignupFormData, value: string) => {
     setFormData({ ...formData, [field]: value })
+    
+    // リアルタイムバリデーション
+    const newErrors = { ...errors }
+    
+    switch (field) {
+      case 'nickname':
+        if (value.trim()) {
+          delete newErrors.nickname
+        }
+        break
+      case 'email':
+        if (value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          delete newErrors.email
+        }
+        break
+      case 'postalCode':
+        if (value && /^\d{7}$/.test(value.replace(/-/g, ""))) {
+          delete newErrors.postalCode
+        }
+        // 郵便番号が変更されたら住所検索をリセット
+        if (hasSearchedAddress) {
+          setHasSearchedAddress(false)
+          setFormData(prev => ({ ...prev, address: "" }))
+        }
+        break
+      case 'birthDate':
+        if (value) {
+          const birthDate = new Date(value)
+          const today = new Date()
+          if (!isNaN(birthDate.getTime()) && birthDate < today && today.getFullYear() - birthDate.getFullYear() <= 120) {
+            delete newErrors.birthDate
+          }
+        }
+        break
+      case 'gender':
+        if (value) {
+          delete newErrors.gender
+        }
+        break
+      case 'password':
+        if (value && value.length >= 8 && /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(value)) {
+          delete newErrors.password
+        }
+        // パスワードが変更されたらパスワード確認もチェック
+        if (formData.passwordConfirm && value === formData.passwordConfirm) {
+          delete newErrors.passwordConfirm
+        }
+        break
+      case 'passwordConfirm':
+        if (value && value === formData.password) {
+          delete newErrors.passwordConfirm
+        }
+        break
+    }
+    
+    setErrors(newErrors)
+  }
+
+  // 入力時のリアルタイムバリデーション用ヘルパー
+  const handleInputChange = (field: keyof SignupFormData, value: string) => {
+    updateFormData(field, value)
+  }
+
+  // 住所が自動入力された場合の処理
+  useEffect(() => {
+    if (formData.address && hasSearchedAddress && errors.address) {
+      setErrors(prev => ({ ...prev, address: undefined }))
+    }
+  }, [formData.address, hasSearchedAddress, errors.address])
     if (errors[field]) {
       setErrors({ ...errors, [field]: undefined })
     }
@@ -163,7 +255,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="メールアドレス"
         placeholder="example@email.com"
         value={formData.email}
-        onChange={(value) => updateFormData("email", value)}
+        onChange={(value) => handleInputChange("email", value)}
         error={errors.email}
         required
       />
@@ -174,7 +266,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="ニックネーム"
         placeholder="ニックネームを入力"
         value={formData.nickname}
-        onChange={(value) => updateFormData("nickname", value)}
+        onChange={(value) => handleInputChange("nickname", value)}
         error={errors.nickname}
         required
       />
@@ -191,7 +283,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
               type="text"
               placeholder="1234567"
               value={formData.postalCode}
-              onChange={(e) => updateFormData("postalCode", e.target.value)}
+              onChange={(e) => handleInputChange("postalCode", e.target.value)}
               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${
                 errors.postalCode ? "border-red-500" : "border-gray-300"
               }`}
@@ -214,7 +306,12 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       {formData.address && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">住所</label>
-          <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700">{formData.address}</div>
+          <div className={`px-4 py-3 border rounded-lg text-gray-700 ${
+            errors.address ? "border-red-500 bg-red-50" : "border-gray-200 bg-gray-50"
+          }`}>
+            {formData.address}
+          </div>
+          {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
         </div>
       )}
 
@@ -222,7 +319,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
       <DateInput
         label="生年月日"
         value={formData.birthDate}
-        onChange={(value) => updateFormData("birthDate", value)}
+        onChange={(value) => handleInputChange("birthDate", value)}
         error={errors.birthDate}
         required
       />
@@ -233,7 +330,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="性別"
         options={genderOptions}
         value={formData.gender}
-        onChange={(value) => updateFormData("gender", value)}
+        onChange={(value) => handleInputChange("gender", value)}
         error={errors.gender}
         required
       />
@@ -244,7 +341,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="パスワード"
         placeholder="8文字以上の英数字"
         value={formData.password}
-        onChange={(value) => updateFormData("password", value)}
+        onChange={(value) => handleInputChange("password", value)}
         error={errors.password}
         required
       />
@@ -255,7 +352,7 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         label="パスワード確認"
         placeholder="パスワードを再入力"
         value={formData.passwordConfirm}
-        onChange={(value) => updateFormData("passwordConfirm", value)}
+        onChange={(value) => handleInputChange("passwordConfirm", value)}
         error={errors.passwordConfirm}
         required
       />
