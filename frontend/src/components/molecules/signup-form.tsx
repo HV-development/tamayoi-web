@@ -55,6 +55,11 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
         gender: initialData.gender || "",
         saitamaAppId: initialData.saitamaAppId || "",
       })
+      
+      // 住所が設定されている場合は検索済みフラグを立てる
+      if (initialData.address) {
+        setHasSearchedAddress(true)
+      }
     }
   }, [initialData])
 
