@@ -2,8 +2,8 @@ import type { UserRank, RankInfo } from "../types/user"
 
 export const RANK_THRESHOLDS = {
   bronze: 0, // 0ヶ月〜
-  silver: 3, // 3ヶ月〜
-  gold: 12, // 12ヶ月〜
+  silver: 12, // 12ヶ月（1年）〜
+  gold: 36, // 36ヶ月（3年）〜
   diamond: 60, // 60ヶ月（5年）〜
 }
 
@@ -14,7 +14,7 @@ export const RANK_INFO: Record<UserRank, RankInfo> = {
     color: "text-amber-700",
     bgColor: "bg-amber-100",
     icon: "🥉",
-    description: "TAMAYOIを始めたばかりの新規メンバー",
+    description: "初回ランク",
     monthsRequired: 0,
   },
   silver: {
@@ -23,8 +23,8 @@ export const RANK_INFO: Record<UserRank, RankInfo> = {
     color: "text-gray-700",
     bgColor: "bg-gray-100",
     icon: "🥈",
-    description: "3ヶ月継続利用の優良メンバー",
-    monthsRequired: 3,
+    description: "契約から1年以上の優良メンバー",
+    monthsRequired: 12,
   },
   gold: {
     rank: "gold",
@@ -32,8 +32,8 @@ export const RANK_INFO: Record<UserRank, RankInfo> = {
     color: "text-yellow-700",
     bgColor: "bg-yellow-100",
     icon: "🥇",
-    description: "1年継続利用のロイヤルメンバー",
-    monthsRequired: 12,
+    description: "契約から3年以上のロイヤルメンバー",
+    monthsRequired: 36,
   },
   diamond: {
     rank: "diamond",
