@@ -81,6 +81,10 @@ export function FilterControls({
     setIsGenrePopupOpen(true)
   }
 
+  const handleGenrePopupClose = () => {
+    setIsGenrePopupOpen(false)
+  }
+
   const handleNotificationIconClick = () => {
     setIsNotificationPanelOpen(true)
     onNotificationClick()
@@ -136,7 +140,7 @@ export function FilterControls({
         isOpen={isGenrePopupOpen}
         selectedGenres={selectedGenres}
         onGenreToggle={handleGenreToggle}
-        onClose={() => setIsGenrePopupOpen(false)}
+        onClose={handleGenrePopupClose}
         onClear={handleGenresClear}
       />
 
