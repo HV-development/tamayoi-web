@@ -29,8 +29,10 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
   // Google Maps APIの初期化
   useEffect(() => {
     const initializeMap = () => {
+      console.log('Google Maps初期化を開始')
       if (!mapRef.current || !window.google) return
 
+      console.log('Google Maps APIが利用可能です')
       const mapOptions = {
         center: SAITAMA_CENTER,
         zoom: 12,
@@ -52,6 +54,7 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
       }
 
       const newMap = new window.google.maps.Map(mapRef.current, mapOptions)
+      console.log('Google Mapsインスタンスを作成しました')
       setMap(newMap)
 
       // さいたま市の境界を表示（オプション）
@@ -138,7 +141,9 @@ export function MapContainer({ selectedArea, selectedGenres }: MapContainerProps
       script.async = true
       script.defer = true
       script.onerror = () => {
-        console.error('Failed to load Google Maps API')
+        console.error('Google Maps APIの読み込みに失敗しました')
+        console.error('APIキー:', 'AIzaSyDdyI7pZ8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z')
+        console.error('スクリプトURL:', script.src)
       }
       
       window.initMap = initializeMap
