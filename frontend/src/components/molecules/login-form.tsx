@@ -44,6 +44,11 @@ export function LoginForm({ onLogin, onSignup, onForgotPassword, isLoading = fal
     }
   }
 
+  const handleSignupClick = (e: React.MouseEvent) => {
+    e.preventDefault() // フォーム送信を防ぐ
+    onSignup()
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <Input
@@ -75,7 +80,7 @@ export function LoginForm({ onLogin, onSignup, onForgotPassword, isLoading = fal
           {isLoading ? "ログイン中..." : "ログイン"}
         </Button>
 
-        <Button type="button" onClick={onSignup} variant="secondary" className="w-full py-3 text-base font-medium">
+        <Button type="button" onClick={handleSignupClick} variant="secondary" className="w-full py-3 text-base font-medium">
           新規登録
         </Button>
       </div>
@@ -83,7 +88,10 @@ export function LoginForm({ onLogin, onSignup, onForgotPassword, isLoading = fal
       <div className="text-center">
         <button
           type="button"
-          onClick={onForgotPassword}
+          onClick={(e) => {
+            e.preventDefault()
+            onForgotPassword()
+          }}
           className="text-sm text-green-600 hover:text-green-700 underline"
         >
           パスワードを忘れた方
