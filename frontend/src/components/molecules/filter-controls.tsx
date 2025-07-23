@@ -94,6 +94,11 @@ export function FilterControls({
     setIsNotificationPanelOpen(false)
   }
 
+  const handleCurrentLocationClick = () => {
+    // 現在地ボタンがクリックされた時の処理を親コンポーネントに委譲
+    onCurrentLocationClick()
+  }
+
   return (
     <div className="bg-white shadow-sm">
       {/* ヘッダー部分にロゴとメニューを追加 */}

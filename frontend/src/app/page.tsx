@@ -60,7 +60,9 @@ export default function HomePage() {
   const hasNotification = notifications.some((n) => !n.isRead)
 
   const handleCurrentLocationClick = () => {
-    console.log("現在地を取得中...")
+    // MapContainerで現在地取得処理を実行
+    // この関数は実際にはMapContainer内で処理される
+    console.log("現在地ボタンがクリックされました")
   }
 
   const handleTabChange = (tab: string) => {
