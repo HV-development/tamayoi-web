@@ -156,57 +156,44 @@ export function SignupForm({ initialData, onSubmit, onCancel, isLoading = false 
     setIsSearchingAddress(true)
     
     try {
-      // モック住所データ
-      const mockAddresses: Record<string, string> = {
-        "3300854": "埼玉県さいたま市大宮区桜木町",
-        "3300063": "埼玉県さいたま市浦和区高砂",
-        "3300846": "埼玉県さいたま市大宮区大門町",
-        "3380001": "埼玉県さいたま市中央区本町東",
-        "3360021": "埼玉県さいたま市南区別所",
-        "3370051": "埼玉県さいたま市見沼区東大宮",
-        "3310823": "埼玉県さいたま市北区日進町",
-        "3380832": "埼玉県さいたま市桜区西堀",
-        "3310052": "埼玉県さいたま市西区三橋",
-        "3390067": "埼玉県さいたま市岩槻区西町",
-        "5640001": "埼玉県本庄市今井"
+      // 郵便番号検索API（zipcloud）を使用
+      const response = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${cleanedPostalCode}`)
+      const data = await response.json()
+      
+      if (data.status === 200 && data.results && data.results.length > 0) {
+        // 住所が見つかった場合
+        const result = data.results[0]
+        const fullAddress = `${result.address1}${result.address2}${result.address3}`
+        
+        setFormData(prev => ({ 
+          ...prev, 
+          address: fullAddress 
+        }))
+        setErrors(prev => ({ ...prev, address: undefined }))
+        console.log("住所検索成功:", fullAddress)
+      } else {
+        // 住所が見つからない場合
+        console.log("住所が見つかりません:", cleanedPostalCode)
+        setErrors(prev => ({
+          ...prev,
+          address: "該当する住所が見つかりませんでした。手入力で住所を入力してください。"
+        }))
+        
+        // 住所フィールドにフォーカスを移す
+        setTimeout(() => {
+          if (addressInputRef.current) {
+            addressInputRef.current.focus()
+          }
+        }, 100)
       }
       
-      // 住所検索のシミュレーション（1秒後に結果を返す）
-      setTimeout(() => {
-        const foundAddress = mockAddresses[cleanedPostalCode]
-        
-        if (foundAddress) {
-          // 住所が見つかった場合
-          setFormData(prev => ({ 
-            ...prev, 
-            address: foundAddress 
-          }))
-          setErrors(prev => ({ ...prev, address: undefined }))
-          console.log("住所検索成功:", foundAddress)
-        } else {
-          // 住所が見つからない場合
-          console.log("住所が見つかりません:", cleanedPostalCode)
-          setErrors(prev => ({
-            ...prev,
-            address: "該当する住所が見つかりませんでした。手入力で住所を入力してください。"
-          }))
-          
-          // 住所フィールドにフォーカスを移す
-          setTimeout(() => {
-            if (addressInputRef.current) {
-              addressInputRef.current.focus()
-            }
-          }, 100)
-        }
-        
-        setIsSearchingAddress(false)
-      }, 1000)
+      setIsSearchingAddress(false)
       
     } catch (error) {
       console.error("住所検索エラー:", error)
       setErrors(prev => ({
         ...prev,
-        address: "住所検索に失敗しました。手入力で住所を入力してください。"
+        address: "住所検索サービスに接続できませんでした。手入力で住所を入力してください。"
       }))
       
       // エラー時も住所フィールドにフォーカス
